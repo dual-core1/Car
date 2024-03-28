@@ -2,34 +2,30 @@
 #include "World.h"
 #endif
 
-bool LoadTextures()
+void LoadTextures()
 {
-	tex[0] = driver->getTexture("Models/City/texture1.bmp");
-	tex[1] = driver->getTexture("Models/City/texture2.bmp");
-	tex[2] = driver->getTexture("Models/City/texture3.bmp");
-
-	return true;
+	tex[0] = driver->getTexture("../Models/City/texture1.bmp");
+	tex[1] = driver->getTexture("../Models/City/texture2.bmp");
+	tex[2] = driver->getTexture("../Models/City/texture3.bmp");
+	tex[3] = driver->getTexture("../Models/Sedan/texture1.bmp");
+	tex[4] = driver->getTexture("../Models/Sedan/texture2.bmp");
+	tex[5] = driver->getTexture("../Models/Sedan/texture3.bmp");
+	tex[6] = driver->getTexture("../Models/Sedan/texture4.bmp");
+	tex[7] = driver->getTexture("../Models/Sedan/texture5.bmp");
+	tex[8] = driver->getTexture("../Models/Sedan/texture6.bmp");
+	tex[9] = driver->getTexture("../Models/Sedan/texture7.bmp");
+	tex[10] = driver->getTexture("../Models/Sedan/texture8.bmp");
+	tex[11] = driver->getTexture("../Models/Wheel1/texture1.bmp");
+	tex[12] = driver->getTexture("../Models/Wheel1/texture2.bmp");
 }
 
 bool LoadWorld()
 {
 	world = scenemgr->addAnimatedMeshSceneNode(
-		scenemgr->getMesh("Models/City/city.3ds"));
+		scenemgr->getMesh("../Models/City/city.3ds"));
 	
 	if (!world) return false;
-	/*
-	world->getMaterial(0).setTexture(0, tex[0]);
-
+	world->setMaterialFlag(EMF_LIGHTING, 0);
 	
-	for (int i = 0; i < 3; i++)
-	{
-		world->getMaterial(i).setTexture(0, tex[i]);
-	}
-	*/
-	world->setMaterialFlag(EMF_LIGHTING, false);
-
-	// create camera and set its position to 325, 20, -2
-	camera = scenemgr->addCameraSceneNode(0, core::vector3df(325, 20, -2));
-
 	return true;
 }

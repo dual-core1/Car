@@ -4,7 +4,7 @@
 #include "Values.h"
 #endif
 
-bool LoadTextures();
+void LoadTextures();
 bool LoadWorld();
 
 #endif

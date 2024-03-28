@@ -1,78 +1,54 @@
-#ifndef __IRRLICHT_H_INCLUDED__
-#include <irrlicht.h>
+#ifndef ENGINE
+#include "Engine.h"
 #endif
-#ifndef VALUES
-#include "Values.h"
+#ifndef VEHICLES
+#include "Vehicles.h"
 #endif
 #ifndef WORLD
 #include "World.h"
 #endif
+#ifndef SIMULATION
+#include "Simulation.h"
+#endif
 
-#include <iostream>
-using std::cout;
-using std::cin;
-
-using namespace irr;
-using namespace video;
-using namespace scene;
-using namespace core;
-using namespace io;
-
-void fail(int cond);
-
-int main()
+int main(int argc, char** argv)
 {
+	int ticks = 0;
+	int elapsed = 0;
+	float delta = 0.0;
 	bool result;
 
-    // INITIATE ENGINE
-	device = createDevice(EDT_DIRECT3D9, dimension2d<u32>(1024, 768), 32U, 1); // Why 1024x768? So I can run this on my ThinkPad T60!
-	if (!device) fail(0);
 
-	driver = device->getVideoDriver();
-	if (!driver) fail(1);
+	InitEngine();	
+	ITimer *timer = device->getTimer();
 
-	scenemgr = device->getSceneManager();
-	if (!scenemgr) fail(2);
-
-	device->setWindowCaption(L"Simulation");
-
-	// LOAD WORLD
-	result = LoadTextures();
-	if (!result) fail(3);
+	LoadTextures();
 
 	result = LoadWorld();
-	if (!result) fail(4);
+	if (!result) fail("ERROR: Couldn't load world.\n");
+
+	result = LoadVehicle();
+	if (!result) fail("ERROR: Couldn't load vehicle.\n");
+
+	camera = scenemgr->addCameraSceneNode(vehicle, core::vector3df(0, 15, 50), vehicle->getPosition());
 	
-	// MAIN LOOP (for now, this is where it is)
+	// MAIN LOOP
 	while (device->run() && driver)
 	{
-		driver->beginScene(1, 1, SColor(255, 174, 248, 255));
+		timer->start();
+		ticks = timer->getTime();
+		do
+		{
+			timer->tick();
+			elapsed = timer->getTime() - ticks;
+		} while (elapsed < 1000.0 / 30);
+		timer->stop();
+		driver->beginScene(1, 1, SColor(255, 200, 200, 200));
+		Simulate();
 		scenemgr->drawAll();
 		driver->endScene();
 	}
 
 	device->drop();
 	return 0;
-}
-
-void fail(int cond)
-{
-	switch (cond)
-	{
-	case 0:
-		cout << "ERROR: Failed to create Direct3D 9 device.\n";
-		break;
-	case 1:
-		cout << "ERROR: Failed to get video driver.\n";
-		break;
-	case 2:
-		cout << "ERROR: Failed to get scene manager.\n";
-		break;
-	case 3:
-		cout << "ERROR: Couldn't load textures.";
-		break;
-	case 4:
-		cout << "ERROR: Couldn't load world.\n";
-		break;
-	}
 }

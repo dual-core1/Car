@@ -3,6 +3,9 @@
 #ifndef __IRRLICHT_H_INCLUDED__
 #include <irrlicht.h>
 #endif
+#ifndef INPUTEVENTRECEIVER
+#include "InputEventReceiver.h"
+#endif
 
 using namespace irr;
 using namespace video;
@@ -19,6 +22,9 @@ extern float currSpeedY;
 extern float currSpeedZ;
 extern float accelRate;
 extern float decelRate;
+extern float brakeRate;
+extern int gear;
+extern int ticksGearChange;
 extern bool accel;
 extern bool rev;
 extern bool idle;
@@ -51,4 +57,5 @@ extern Mix_Chunk* sRev;
 extern IrrlichtDevice *device;
 extern IVideoDriver *driver;
 extern ISceneManager *scenemgr;
+extern InputEventReceiver *receiver;
 #endif

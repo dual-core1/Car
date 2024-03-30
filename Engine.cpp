@@ -11,11 +11,11 @@ void InitEngine()
 
 	if (res == 1)
 	{
-		device = createDevice(EDT_DIRECT3D9, dimension2d<u32>(1024, 768), 32U, 1);
+		device = createDevice(EDT_DIRECT3D9, dimension2d<u32>(1024, 768), 32U, 1, 0, 0, receiver);
 	}
 	else if (res == 2)
 	{
-		device = createDevice(EDT_DIRECT3D9, dimension2d<u32>(1280, 720), 32U, 1);
+		device = createDevice(EDT_DIRECT3D9, dimension2d<u32>(1280, 720), 32U, 1, 0, 0, receiver);
 	}
 	else
 	{

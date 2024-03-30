@@ -6,6 +6,20 @@
 extern ICameraSceneNode *camera = NULL;
 extern ISceneNode *world = NULL;
 
+// simulation
+extern float speedLim = 7.0;
+extern float currSpeedX = 0.0;
+extern float currSpeedY = 0.0;
+extern float currSpeedZ = 0.0;
+extern float accelRate = 0.5;
+extern float decelRate = 0.02;
+extern float brakeRate = 2;
+extern int gear = 1; // 1 = drive, 0 = reverse
+extern int ticksGearChange = 0;
+extern bool accel = false;
+extern bool rev = false;
+extern bool idle = true;
+
 // vehicles
 extern ISceneNode *vehicle = NULL;
 extern ISceneNode *wheels[4] = { NULL, NULL, NULL, NULL };
@@ -32,3 +46,4 @@ extern Mix_Chunk* sRev = NULL;*/
 extern IrrlichtDevice *device = NULL;
 extern IVideoDriver *driver = NULL;
 extern ISceneManager *scenemgr = NULL;
+extern InputEventReceiver *receiver = new InputEventReceiver();

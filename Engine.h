@@ -6,6 +6,9 @@
 #ifndef VALUES
 #include "Values.h"
 #endif
+#ifndef INPUTEVENTRECEIEVER
+#include "InputEventReceiver.h"
+#endif
 
 #include <iostream>
 using std::cout;

@@ -7,101 +7,109 @@ void Simulate()
 	// gear change?
 	if (ticksGearChange >= 60)
 	{
-		if (gear == 1)
-			gear = 0;
-		else if (gear == 0)
-			gear = 1;
+		if (gear == DRIVE)
+			gear = REVERSE;
+		else if (gear == REVERSE)
+			gear = DRIVE;
 
 		ticksGearChange = 0;
 	}
 
+	// calculate vectors
+	forwardVector = vector3df(sin(ToRadians(vehicle->getRotation().Y)), 0, cos(ToRadians(vehicle->getRotation().Y)));
+	movementVector = forwardVector * speed;
+	newPosition = vehicle->getPosition() + movementVector;
+
 	// get key input
-	if (receiver->GetKeyboardState().Up)
+	if (receiver->GetKeyboardState().Down)
 	{
-		if (gear == 1)
+		if (gear == DRIVE)
 		{
-			currSpeedZ = currSpeedZ - accelRate * cos(ToRadians(vehicle->getRotation().Y));
-			currSpeedX = currSpeedX - accelRate * sin(ToRadians(vehicle->getRotation().Y));
+			speed += accelRate;
 		}
-		else
+		else if (gear == REVERSE)
 		{
-			if (currSpeedZ + currSpeedX <= 0.02)
+			if (speed > -0.02)
+			{
 				ticksGearChange++;
+			}
 			else
 			{
-				currSpeedZ = currSpeedZ + brakeRate * cos(ToRadians(vehicle->getRotation().Y));
-				currSpeedX = currSpeedX + brakeRate * sin(ToRadians(vehicle->getRotation().Y));
-
-
-				// clamp
-				if (currSpeedZ < 0) currSpeedZ = 0;
-				if (currSpeedX < 0) currSpeedX = 0;
+				if (speed + brakeRate > 0)
+					speed = 0;
+				else
+					speed += brakeRate;
 			}
 		}
 	}
 
-	if (receiver->GetKeyboardState().Down)
+	if (receiver->GetKeyboardState().Up)
 	{
-		if (gear == 0)
+		if (gear == REVERSE)
 		{
-			currSpeedZ = currSpeedZ + accelRate * cos(ToRadians(vehicle->getRotation().Y));
-			currSpeedX = currSpeedX + accelRate * sin(ToRadians(vehicle->getRotation().Y));
+			speed -= accelRate;
 		}
-		else
+		else if (gear == DRIVE)
 		{
-			if (currSpeedZ + currSpeedX >= -0.02)
+			if (speed < 0.02)
+			{
 				ticksGearChange++;
+			}
 			else
 			{
-				currSpeedZ = currSpeedZ - brakeRate * cos(ToRadians(vehicle->getRotation().Y));
-				currSpeedX = currSpeedX - brakeRate * sin(ToRadians(vehicle->getRotation().Y));
-
-				// clamp
-				if (currSpeedZ > 0) currSpeedZ = 0;
-				if (currSpeedX > 0) currSpeedX = 0;
+				if (speed - brakeRate < 0)
+					speed = 0;
+				else
+					speed -= brakeRate;
 			}
 		}
 	}
 
 	if (receiver->GetKeyboardState().Left)
 	{
-		vehicle->setRotation(vector3df(vehicle->getRotation().X, vehicle->getRotation().Y - 10, vehicle->getRotation().Z));
+		vehicle->setRotation(
+			vector3df(
+				vehicle->getRotation().X,
+				vehicle->getRotation().Y + 2 * speed,
+				vehicle->getRotation().Z
+			)
+		);
 	}
 
 	if (receiver->GetKeyboardState().Right)
 	{
-		vehicle->setRotation(vector3df(vehicle->getRotation().X, vehicle->getRotation().Y + 10, vehicle->getRotation().Z));
+		vehicle->setRotation(
+			vector3df(
+				vehicle->getRotation().X,
+				vehicle->getRotation().Y - 2 * speed,
+				vehicle->getRotation().Z
+			)
+		);
 	}
 
+	// decelerate
 	if (!receiver->GetKeyboardState().Up && !receiver->GetKeyboardState().Down)
 	{
-		ticksGearChange = 0;
+		if (speed < 0)
+		{
+			if (speed + decelRate > 0)
+				speed = 0;
+			else
+				speed += decelRate;
+		}
+
+		if (speed > 0)
+		{
+			if (speed - decelRate < 0)
+				speed = 0;
+			else
+				speed -= decelRate;
+		}
 	}
 
 	// clamp speed
-	if (currSpeedX > speedLim)
-		currSpeedX = speedLim;
-
-	if (currSpeedX < -1 * speedLim)
-		currSpeedX = -1 * speedLim;
-
-	if (currSpeedZ > speedLim)
-		currSpeedZ = speedLim;
-
-	if (currSpeedZ < -1 * speedLim)
-		currSpeedZ = -1 * speedLim;
-
-	// decelerate
-	if (currSpeedZ < 0)
-		currSpeedZ += decelRate * cos(ToRadians(vehicle->getRotation().Y));
-	else if (currSpeedZ > 0)
-		currSpeedZ -= decelRate * cos(ToRadians(vehicle->getRotation().Y));
-
-	if (currSpeedX < 0)
-		currSpeedX += decelRate * sin(ToRadians(vehicle->getRotation().Y));
-	else if (currSpeedX > 0)
-		currSpeedX -= decelRate * sin(ToRadians(vehicle->getRotation().Y));
-
+	if (speed < -1 * speedLim) speed = -1 * speedLim;
+	if (speed > speedLim) speed = speedLim;
 
 	// fix camera
 	camera->setTarget(vehicle->getPosition());
@@ -109,8 +117,6 @@ void Simulate()
 	// reset keys
 	receiver->reset();
 
-	// let's go go go!
-	vehicle->setPosition(vector3df(vehicle->getPosition().X + currSpeedX * sin(ToRadians(vehicle->getRotation().Y)),
-		vehicle->getPosition().Y,
-		vehicle->getPosition().Z + currSpeedZ * cos(ToRadians(vehicle->getRotation().Y))));
+	// move
+	vehicle->setPosition(newPosition);
 }

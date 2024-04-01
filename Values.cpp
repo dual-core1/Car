@@ -8,9 +8,10 @@ extern ISceneNode *world = NULL;
 
 // simulation
 extern float speedLim = 7.0;
-extern float currSpeedX = 0.0;
-extern float currSpeedY = 0.0;
-extern float currSpeedZ = 0.0;
+extern vector3df forwardVector = vector3df(0, 0, 0);
+extern vector3df movementVector = vector3df(0, 0, 0);
+extern vector3df newPosition = vector3df(0, 10, 0);
+extern float speed = 0;
 extern float accelRate = 0.5;
 extern float decelRate = 0.02;
 extern float brakeRate = 2;

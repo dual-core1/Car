@@ -17,9 +17,10 @@ extern ISceneNode *world;
 
 // simulation
 extern float speedLim;
-extern float currSpeedX;
-extern float currSpeedY;
-extern float currSpeedZ;
+extern vector3df forwardVector;
+extern vector3df movementVector;
+extern vector3df newPosition;
+extern float speed;
 extern float accelRate;
 extern float decelRate;
 extern float brakeRate;

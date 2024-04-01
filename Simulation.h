@@ -10,5 +10,7 @@
 #ifndef FUNCTIONS
 #include "Functions.h"
 #endif
+#define DRIVE 1
+#define REVERSE 0
 
 void Simulate();
